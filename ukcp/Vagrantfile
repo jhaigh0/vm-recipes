@@ -1,0 +1,120 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ROOT_IP="192.168.50"
+BOX="cedadev/centos6"
+
+# set the variables for the different nodes in the cluster
+
+all_hosts = {
+    DIRECT_SERVER:  ROOT_IP+".4",
+    WPS_SERVER:     ROOT_IP+".5",
+    BATCH_SERVER:   ROOT_IP+".6",
+    MANAGER_SERVER: ROOT_IP+".7",
+    SINGLE_SERVER:  ROOT_IP+".8"
+}
+
+# provision the servers in the order above
+
+Vagrant.configure("2") do |config|
+
+    ###############################################################
+    # provision the batch server
+    config.vm.define "batch-server" do |batch|
+        batch.vm.box = BOX
+        batch.vm.network "private_network", ip: all_hosts[:BATCH_SERVER]
+        batch.vm.hostname = "batch1"
+        # copy the root's key
+batch.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+        batch.vm.provision :ansible do |ans|
+            ans.force_remote_user = false
+            ans.ask_vault_pass = true
+            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
+            ans.playbook = "playbook/deploy-batch.yml"
+        end
+    end
+
+    ###############################################################
+    # provision the manager server
+    config.vm.define "manager" do |manager|
+        manager.vm.box = BOX
+        manager.vm.network "private_network", ip: all_hosts[:MANAGER_SERVER]
+        manager.vm.hostname = "mngr1"
+        # copy the root's key
+manager.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+        manager.vm.provision :ansible do |ans|
+            ans.force_remote_user = false
+            ans.ask_vault_pass = true
+            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
+            ans.playbook = "playbook/deploy-manager.yml"
+        end
+    end
+
+    ###############################################################
+    # provision the wps server
+    config.vm.define "wps-server" do |wps|
+        wps.vm.box = BOX
+        wps.vm.network "private_network", ip: all_hosts[:WPS_SERVER]
+        wps.vm.hostname = "wps1"
+        # copy the root's key
+wps.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+        wps.vm.provision :ansible do |ans|
+            ans.force_remote_user = false
+            ans.ask_vault_pass = true
+            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
+            ans.playbook = "playbook/deploy-wps.yml"
+        end
+    end
+
+    ###############################################################
+    # provision the direct server
+    config.vm.define "direct" do |dt|
+        dt.vm.box = BOX
+        dt.vm.network "private_network", ip: all_hosts[:DIRECT_SERVER]
+        dt.vm.hostname = "direct"
+        # copy the root's key
+dt.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+        dt.vm.provision :ansible do |ans|
+            ans.force_remote_user = false
+            ans.ask_vault_pass = true
+            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
+            ans.playbook = "playbook/deploy-direct.yml"
+        end
+    end
+
+    ###############################################################
+    # provision the single server
+    config.vm.define "single-server", autostart: false do |single|
+        single.vm.box = BOX
+        single.vm.network "private_network", ip: all_hosts[:SINGLE_SERVER]
+        single.vm.hostname = "single-server"
+        # copy the root's key
+single.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+        single.vm.provision :ansible do |ans|
+            ans.force_remote_user = false
+            ans.ask_vault_pass = true
+            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
+            ans.playbook = "playbook/deploy-single-server.yml"
+        end
+    end
+end
