@@ -11,6 +11,14 @@ config.vm.provision :shell, inline: <<SHELL
 set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
+yum install -y git
+
+echo "[user]" > /home/vagrant/.gitconfig
+echo "        name = Ag Stephens" >> /home/vagrant/.gitconfig
+echo "        email = ag.stephens@stfc.ac.uk" >> /home/vagrant/.gitconfig
+chown vagrant.vagrant /home/vagrant/.gitconfig
+
+cp /home/vagrant/.gitconfig /root/.gitconfig
 SHELL
 
 end
