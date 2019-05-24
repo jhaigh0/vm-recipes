@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ROOT_IP="192.168.50"
+BOX="cedadev/centos7"
+
+# set the variables for the different nodes in the cluster
+
+all_hosts = {
+    DATA_NODE:      ROOT_IP+".200",
+    INDEX_NODE:     ROOT_IP+".201",
+    IDP_NODE:       ROOT_IP+".202"
+}
+
+# provision the servers in the order above
+
+Vagrant.configure("2") do |config|
+
+    ###############################################################
+    # provision the data node
+    config.vm.define "data-node" do |data|
+        data.vm.box = BOX
+        data.vm.network "private_network", ip: all_hosts[:DATA_NODE]
+        batch.vm.hostname = "data"
+        # copy the root's key
+batch.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+    end
+
+    ###############################################################
+    # provision the index node
+    config.vm.define "index-node" do |index|
+        index.vm.box = BOX
+        index.vm.network "private_network", ip: all_hosts[:INDEX_NODE]
+        index.vm.hostname = "index"
+        # copy the root's key
+batch.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+    end
+
+    ###############################################################
+    # provision the IDP node
+    config.vm.define "idp-node" do |idp|
+        idp.vm.box = BOX
+        idp.vm.network "private_network", ip: all_hosts[:IDP_NODE]
+        idp.vm.hostname = "idp"
+        # copy the root's key
+batch.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+
+    end
+end
