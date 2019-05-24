@@ -21,9 +21,9 @@ Vagrant.configure("2") do |config|
     config.vm.define "data-node" do |data|
         data.vm.box = BOX
         data.vm.network "private_network", ip: all_hosts[:DATA_NODE]
-        batch.vm.hostname = "data"
+        data.vm.hostname = "data"
         # copy the root's key
-batch.vm.provision :shell, inline: <<SHELL
+data.vm.provision :shell, inline: <<SHELL
 set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
@@ -37,7 +37,7 @@ SHELL
         index.vm.network "private_network", ip: all_hosts[:INDEX_NODE]
         index.vm.hostname = "index"
         # copy the root's key
-batch.vm.provision :shell, inline: <<SHELL
+index.vm.provision :shell, inline: <<SHELL
 set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
@@ -51,7 +51,7 @@ SHELL
         idp.vm.network "private_network", ip: all_hosts[:IDP_NODE]
         idp.vm.hostname = "idp"
         # copy the root's key
-batch.vm.provision :shell, inline: <<SHELL
+idp.vm.provision :shell, inline: <<SHELL
 set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
