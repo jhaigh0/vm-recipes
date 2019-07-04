@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 ROOT_IP="192.168.50"
-BOX="cedadev/centos6"
+BOX="cedadev/centos7"
 
 # set the variables for the different nodes in the cluster
 
