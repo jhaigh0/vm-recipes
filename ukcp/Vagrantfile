@@ -30,12 +30,6 @@ set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
 SHELL
-        batch.vm.provision :ansible do |ans|
-            ans.force_remote_user = false
-            ans.ask_vault_pass = true
-            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
-            ans.playbook = "playbook/deploy-batch.yml"
-        end
     end
 
     ###############################################################
@@ -50,12 +44,6 @@ set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
 SHELL
-        manager.vm.provision :ansible do |ans|
-            ans.force_remote_user = false
-            ans.ask_vault_pass = true
-            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
-            ans.playbook = "playbook/deploy-manager.yml"
-        end
     end
 
     ###############################################################
@@ -70,12 +58,6 @@ set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
 SHELL
-        wps.vm.provision :ansible do |ans|
-            ans.force_remote_user = false
-            ans.ask_vault_pass = true
-            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
-            ans.playbook = "playbook/deploy-wps.yml"
-        end
     end
 
     ###############################################################
@@ -90,31 +72,25 @@ set -x
 mkdir -p /root/.ssh
 cp ~vagrant/.ssh/authorized_keys /root/.ssh
 SHELL
-        dt.vm.provision :ansible do |ans|
-            ans.force_remote_user = false
-            ans.ask_vault_pass = true
-            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
-            ans.playbook = "playbook/deploy-direct.yml"
-        end
     end
 
     ###############################################################
     # provision the single server
-    config.vm.define "single-server", autostart: false do |single|
-        single.vm.box = BOX
-        single.vm.network "private_network", ip: all_hosts[:SINGLE_SERVER]
-        single.vm.hostname = "single-server"
-        # copy the root's key
-single.vm.provision :shell, inline: <<SHELL
-set -x
-mkdir -p /root/.ssh
-cp ~vagrant/.ssh/authorized_keys /root/.ssh
-SHELL
-        single.vm.provision :ansible do |ans|
-            ans.force_remote_user = false
-            ans.ask_vault_pass = true
-            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
-            ans.playbook = "playbook/deploy-single-server.yml"
-        end
-    end
+#    config.vm.define "single-server", autostart: false do |single|
+#        single.vm.box = BOX
+#        single.vm.network "private_network", ip: all_hosts[:SINGLE_SERVER]
+#        single.vm.hostname = "single-server"
+#        # copy the root's key
+#single.vm.provision :shell, inline: <<SHELL
+#set -x
+#mkdir -p /root/.ssh
+#cp ~vagrant/.ssh/authorized_keys /root/.ssh
+#SHELL
+#        single.vm.provision :ansible do |ans|
+#            ans.force_remote_user = false
+#            ans.ask_vault_pass = true
+#            ans.inventory_path = "playbook/inventories/hosts-vagrant.yml"
+#            ans.playbook = "playbook/deploy-single-server.yml"
+#        end
+#    end
 end
