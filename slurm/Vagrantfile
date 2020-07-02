@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ROOT_IP="192.168.50"
+BOX="cedadev/centos7"
+
+# set the variables for the different nodes in the cluster
+
+all_hosts = {
+    MASTER_SERVER:   ROOT_IP+".44",
+    BATCH1_SERVER:   ROOT_IP+".45",
+    BATCH2_SERVER:   ROOT_IP+".46"
+}
+
+# provision the servers in the order above
+
+Vagrant.configure("2") do |config|
+
+    ###############################################################
+    # provision the master server
+    config.vm.define "slurmmaster" do |slurmmaster|
+        slurmmaster.vm.box = BOX
+        slurmmaster.vm.network "private_network", ip: all_hosts[:MASTER_SERVER]
+        slurmmaster.vm.hostname = "slurmmaster"
+        # copy the root's key
+slurmmaster.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+    end
+
+    ###############################################################
+    # provision the batch1 server
+    config.vm.define "slurmbatch1" do |slurmbatch1|
+        slurmbatch1.vm.box = BOX
+        slurmbatch1.vm.network "private_network", ip: all_hosts[:BATCH1_SERVER]
+        slurmbatch1.vm.hostname = "slurmbatch1"
+        # copy the root's key
+slurmbatch1.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+    end
+
+    ###############################################################
+    # provision the batch2 server
+    config.vm.define "slurmbatch2" do |slurmbatch2|
+        slurmbatch2.vm.box = BOX
+        slurmbatch2.vm.network "private_network", ip: all_hosts[:BATCH2_SERVER]
+        slurmbatch2.vm.hostname = "slurmbatch2"
+        # copy the root's key
+slurmbatch2.vm.provision :shell, inline: <<SHELL
+set -x
+mkdir -p /root/.ssh
+cp ~vagrant/.ssh/authorized_keys /root/.ssh
+SHELL
+    end
+    
+end
